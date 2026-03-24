@@ -1375,6 +1375,7 @@ class Game {
       this.warpTowns = towns;
       this.warpIdx = 0;
       this.state = 'warpSelect';
+      clearJP();
     }
   }
 
