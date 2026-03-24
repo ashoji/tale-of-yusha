@@ -369,7 +369,7 @@ class Game {
       level:1, exp:0, gold:20, atk:3, def:2, spd:3,
       weapon:null, armor:null, shield:null,
       items:['herb','herb','herb'],
-      spells:[], flags:{}, lastTown:'startTown'
+      spells:[], flags:{ visitedTowns:['startTown'] }, lastTown:'startTown'
     };
     this.mapId = 'world';
     this.loadChestStates();
@@ -757,6 +757,9 @@ class Game {
       // Switch BGM based on map
       if (mapId === 'startTown' || mapId === 'lakeTown' || mapId === 'portTown') {
         if (BGM.playing !== 'town') BGM.play('town');
+        // Record visited town
+        if (!this.player.flags.visitedTowns) this.player.flags.visitedTowns = [];
+        if (!this.player.flags.visitedTowns.includes(mapId)) this.player.flags.visitedTowns.push(mapId);
       } else {
         if (BGM.playing !== 'field') BGM.play('field');
       }
