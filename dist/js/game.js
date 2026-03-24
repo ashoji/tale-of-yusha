@@ -662,6 +662,11 @@ class Game {
           this.openShop(npc.shop);
           return;
         }
+        if (npc.inn) {
+          this.state = 'inn';
+          this.menuIdx = 0;
+          return;
+        }
         if (npc.event === 'kingQuest' && !p.flags.gotQuest) {
           p.flags.gotQuest = true;
         }
@@ -700,17 +705,6 @@ class Game {
       else if (SHIELDS[item]) { p.shield = item; itemName = SHIELDS[item].name; }
       this.showMessage([`たからばこをあけた！\n${itemName}を てにいれた！`]);
       return;
-    }
-
-    // Check for inn
-    if (m.inn) {
-      const innDist = Math.abs(p.x - m.inn.x) + Math.abs(p.y - m.inn.y);
-      if (innDist <= 1) {
-        sfx('confirm');
-        this.state = 'inn';
-        this.menuIdx = 0;
-        return;
-      }
     }
   }
 
@@ -1185,7 +1179,10 @@ class Game {
     if (b.monster.currentHp > 0) {
       const ms = MONSTER_SPRITES[b.monster.sprite];
       if (ms && ms.draw) {
-        ms.draw(this.ctx, SW/2-48, 20, 96, 96);
+        const isBigBoss = b.monsterId === 'demonLord' || b.monsterId === 'zomt';
+        const mw = isBigBoss ? 128 : 96;
+        const mh = isBigBoss ? 112 : 96;
+        ms.draw(this.ctx, SW/2 - mw/2, isBigBoss ? 8 : 20, mw, mh);
       }
     }
 
@@ -1313,6 +1310,14 @@ class Game {
         } else if (item && item.type === 'warp') {
           p.items.splice(this.menuSubIdx, 1);
           this.warpToTown();
+        } else if (item && item.type === 'field' && p.items[this.menuSubIdx] === 'torch') {
+          p.flags.hasTorch = true;
+          p.items.splice(this.menuSubIdx, 1);
+          sfx('confirm');
+          this.showMessage(['たいまつに ひを つけた！\nまわりが あかるくなった！'], () => {
+            this.state = 'menu'; this.menuSub = 'items';
+            this.menuSubIdx = Math.min(this.menuSubIdx, p.items.length - 1);
+          });
         }
       }
     } else if (this.menuSub === 'spells') {
@@ -1569,13 +1574,24 @@ class Game {
       if (this.menuIdx === 0) {
         if (p.gold >= m.inn.price) {
           p.gold -= m.inn.price;
-          p.hp = p.maxHp;
-          p.mp = p.maxMp;
-          sfx('heal');
-          this.showMessage(['おやすみなさい…\nHPとMPが かいふくした！']);
+          sfx('confirm');
+          // Blackout + heal + morning message
+          this.fadeDir = 1; this.fade = 0;
+          this.fadeCb = () => {
+            p.hp = p.maxHp;
+            p.mp = p.maxMp;
+            sfx('heal');
+            setTimeout(() => {
+              this.fadeDir = -1;
+              this.fadeCb = () => {
+                this.fadeDir = 0;
+                this.showMessage(['おはようございます！\nぐっすり おやすみに\nなれましたか？\nHPとMPが かいふくしました！']);
+              };
+            }, 600);
+          };
         } else {
           sfx('cancel');
-          this.showMessage(['おかねが たりないよ！']);
+          this.showMessage(['おかねが たりないようです…']);
         }
       } else {
         sfx('cancel');
