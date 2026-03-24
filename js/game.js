@@ -662,6 +662,11 @@ class Game {
           this.openShop(npc.shop);
           return;
         }
+        if (npc.inn) {
+          this.state = 'inn';
+          this.menuIdx = 0;
+          return;
+        }
         if (npc.event === 'kingQuest' && !p.flags.gotQuest) {
           p.flags.gotQuest = true;
         }
@@ -1580,13 +1585,24 @@ class Game {
       if (this.menuIdx === 0) {
         if (p.gold >= m.inn.price) {
           p.gold -= m.inn.price;
-          p.hp = p.maxHp;
-          p.mp = p.maxMp;
-          sfx('heal');
-          this.showMessage(['おやすみなさい…\nHPとMPが かいふくした！']);
+          sfx('confirm');
+          // Blackout + heal + morning message
+          this.fadeDir = 1; this.fade = 0;
+          this.fadeCb = () => {
+            p.hp = p.maxHp;
+            p.mp = p.maxMp;
+            sfx('heal');
+            setTimeout(() => {
+              this.fadeDir = -1;
+              this.fadeCb = () => {
+                this.fadeDir = 0;
+                this.showMessage(['おはようございます！\nぐっすり おやすみに\nなれましたか？\nHPとMPが かいふくしました！']);
+              };
+            }, 600);
+          };
         } else {
           sfx('cancel');
-          this.showMessage(['おかねが たりないよ！']);
+          this.showMessage(['おかねが たりないようです…']);
         }
       } else {
         sfx('cancel');
