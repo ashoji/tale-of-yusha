@@ -1374,7 +1374,9 @@ class Game {
       // Show selection dialog
       this.warpTowns = towns;
       this.warpIdx = 0;
+      this.warpGuard = true;
       this.state = 'warpSelect';
+      clearJP();
     }
   }
 
@@ -1654,6 +1656,7 @@ class Game {
 
   // --- State: Warp Select ---
   updateWarpSelect() {
+    if (this.warpGuard) { this.warpGuard = false; return; }
     const towns = this.warpTowns;
     if (isDirOnce('up')) { sfx('cursor'); this.warpIdx = (this.warpIdx + towns.length - 1) % towns.length; }
     if (isDirOnce('down')) { sfx('cursor'); this.warpIdx = (this.warpIdx + 1) % towns.length; }
