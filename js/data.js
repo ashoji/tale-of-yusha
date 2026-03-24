@@ -358,72 +358,117 @@ const MONSTER_SPRITES = {
   }},
 };
 
-// --- World Map (30x30) ---
+// --- World Map (50x50) ---
 // 0=grass 1=water 2=mountain 3=forest 4=town 5=cave 6=castle 7=bridge 8=desert 9=swamp
 function generateWorldMap() {
-  const W=30,H=30, m=[];
+  const W=50,H=50, m=[];
   for(let y=0;y<H;y++){m[y]=[];for(let x=0;x<W;x++)m[y][x]=0;}
   // Water border
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     if(x<2||x>=W-2||y<2||y>=H-2) m[y][x]=1;
-    if(x<1||x>=W-1||y<1||y>=H-1) m[y][x]=1;
   }
-  // River N-S around x=14-15
-  for(let y=4;y<24;y++){m[y][14]=1;m[y][15]=1;}
-  // Bridge south
-  m[20][14]=7; m[20][15]=7;
-  // Bridge mid (to lake town)
-  m[15][14]=7; m[15][15]=7;
-  // Mountains NW
-  for(let y=4;y<11;y++)for(let x=3;x<10;x++){
-    if((x-6)*(x-6)+(y-7)*(y-7)<10) m[y][x]=2;
+
+  // === South region (start area) ===
+  // Forests around start village
+  for(let y=38;y<47;y++)for(let x=3;x<18;x++){
+    if(m[y][x]===0 && ((x+y)%3===0||(x*y)%7===1)) m[y][x]=3;
   }
-  // Mountains NE
-  for(let y=3;y<8;y++)for(let x=20;x<27;x++){
-    if((x-23)*(x-23)+(y-5)*(y-5)<8) m[y][x]=2;
-  }
-  // Forests west
-  for(let y=6;y<14;y++)for(let x=3;x<13;x++){
-    if(m[y][x]===0 && ((x+y)%3===0||(x*y)%5===1)) m[y][x]=3;
-  }
-  // Forests east
-  for(let y=10;y<18;y++)for(let x=16;x<22;x++){
-    if(m[y][x]===0 && ((x+y)%4===0)) m[y][x]=3;
-  }
-  // Desert area SW
-  for(let y=20;y<26;y++)for(let x=3;x<8;x++){
+  // Desert area SE
+  for(let y=40;y<47;y++)for(let x=30;x<45;x++){
     if(m[y][x]===0) m[y][x]=8;
   }
-  // Swamp near cave
-  m[9][5]=9; m[9][6]=9; m[10][5]=9;
-  // Lake around lake town (water ring)
-  for(let y=13;y<18;y++)for(let x=17;x<23;x++){
+  // Clear path around start town
+  for(let y=42;y<47;y++) { m[y][10]=0; m[y][11]=0; }
+  m[44][10]=4; // Start town
+
+  // === Mid-south (path to lake town) ===
+  // River E-W around y=36-37
+  for(let x=4;x<40;x++){m[36][x]=1;m[37][x]=1;}
+  // Bridge south (to cross river going north)
+  m[36][12]=7; m[37][12]=7;
+  // Path north from start
+  for(let y=35;y<44;y++) { if(m[y][12]!==1&&m[y][12]!==7) m[y][12]=0; }
+
+  // === Mid region (lake town area) ===
+  // Lake around lake town (big lake)
+  for(let y=28;y<36;y++)for(let x=16;x<28;x++){
     if(m[y][x]===0) m[y][x]=1;
   }
   // Lake town island
-  for(let y=14;y<17;y++)for(let x=19;x<22;x++) m[y][x]=0;
-  // Bridge to lake town
-  m[15][17]=7; m[15][18]=7;
-  // Clear paths
-  for(let y=16;y<26;y++) if(m[y][10]!==1) m[y][10]=0;
-  for(let y=16;y<26;y++) if(m[y][11]!==1) m[y][11]=0;
-  for(let x=10;x<15;x++) if(m[20][x]!==1&&m[20][x]!==7) m[20][x]=0;
-  for(let x=15;x<22;x++) if(m[20][x]!==1&&m[20][x]!==7) m[20][x]=0;
-  // Path across mid bridge to lake town
-  for(let x=10;x<14;x++) if(m[15][x]===0) m[15][x]=0;
-  for(let x=15;x<18;x++) if(m[15][x]!==1&&m[15][x]!==7) m[15][x]=0;
-  // Path to castle
-  for(let y=3;y<20;y++) if(m[y][17]===0||m[y][17]===3) m[y][17]=0;
-  // Path from lake town north
-  for(let y=10;y<14;y++) if(m[y][20]===0||m[y][20]===1) m[y][20]=0;
-  // Clear around cave entrance
-  m[7][6]=0; m[6][6]=0; m[8][6]=0;
-  // Locations
-  m[24][10]=4; // Start town
-  m[15][20]=4; // Lake town
-  m[18][22]=4; // Port town
-  m[7][6]=5;   // Cave
-  m[3][17]=6;  // Dark castle
+  for(let y=30;y<34;y++)for(let x=19;x<24;x++) m[y][x]=0;
+  m[32][20]=4; // Lake town
+  // Bridge to lake town from west
+  m[32][16]=7; m[32][17]=7; m[32][18]=7;
+  // Path from bridge to lake town area
+  for(let x=12;x<17;x++) { if(m[32][x]!==1&&m[32][x]!==7) m[32][x]=0; }
+  // Path north from river bridge area toward lake
+  for(let y=28;y<36;y++) { if(m[y][12]!==1) m[y][12]=0; }
+
+  // Forests mid-west
+  for(let y=24;y<32;y++)for(let x=3;x<15;x++){
+    if(m[y][x]===0 && ((x+y)%4===0||(x*2+y)%7===0)) m[y][x]=3;
+  }
+
+  // === Cave area (west of center) ===
+  // Mountains around cave
+  for(let y=18;y<26;y++)for(let x=6;x<18;x++){
+    if((x-12)*(x-12)+(y-22)*(y-22)<16) m[y][x]=2;
+  }
+  // Clear cave entrance and path
+  m[22][12]=5; // Cave entrance
+  m[22][11]=0; m[22][13]=0; m[21][12]=0; m[23][12]=0;
+  // Path from lake area north to cave
+  for(let y=22;y<28;y++) { if(m[y][12]===3||m[y][12]===0) m[y][12]=0; }
+  // Swamp near cave
+  m[23][10]=9; m[24][10]=9; m[23][11]=9;
+
+  // === East region (path to port town) ===
+  // River N-S on east side around x=32-33
+  for(let y=8;y<36;y++){m[y][32]=1;m[y][33]=1;}
+  // Bridge east (mid level)
+  m[25][32]=7; m[25][33]=7;
+  // Path east from cave area across bridge
+  for(let x=13;x<32;x++) { if(m[25][x]===0||m[25][x]===3) m[25][x]=0; }
+  // Forest east of river
+  for(let y=14;y<24;y++)for(let x=34;x<46;x++){
+    if(m[y][x]===0 && ((x+y)%3===0)) m[y][x]=3;
+  }
+  // Port town area - coast
+  for(let y=14;y<22;y++)for(let x=42;x<48;x++){
+    if(m[y][x]===0||m[y][x]===3) m[y][x]=1;
+  }
+  m[18][38]=4; // Port town
+  // Path from bridge east to port town
+  for(let x=33;x<39;x++) { if(m[18][x]!==1) m[18][x]=0; }
+  for(let y=18;y<26;y++) { if(m[y][34]!==1&&m[y][34]!==7) m[y][34]=0; }
+  // Clear port town surroundings
+  for(let y=16;y<21;y++)for(let x=36;x<42;x++){
+    if(m[y][x]===3) m[y][x]=0;
+  }
+
+  // === North region (dark castle) ===
+  // Mountains north
+  for(let y=3;y<10;y++)for(let x=6;x<20;x++){
+    if((x-13)*(x-13)+(y-6)*(y-6)<18) m[y][x]=2;
+  }
+  for(let y=3;y<10;y++)for(let x=28;x<42;x++){
+    if((x-35)*(x-35)+(y-6)*(y-6)<18) m[y][x]=2;
+  }
+  // Dark castle
+  m[5][24]=6;
+  // Clear path to castle from south
+  for(let y=5;y<14;y++) { m[y][24]=m[y][24]===6?6:0; m[y][25]=0; }
+  // Path from port area / cave area north to castle corridor
+  for(let y=10;y<18;y++) { if(m[y][24]===0||m[y][24]===3) m[y][24]=0; }
+  // Connect east side path to castle path
+  for(let x=24;x<34;x++) { if(m[14][x]===0||m[14][x]===3) m[14][x]=0; }
+
+  // === Additional paths ===
+  // Main north-south corridor on west side
+  for(let y=10;y<28;y++) { if(m[y][12]===0||m[y][12]===3||m[y][12]===2) m[y][12]=0; }
+  // Connect west corridor to castle path
+  for(let x=12;x<25;x++) { if(m[12][x]===0||m[12][x]===3) m[12][x]=0; }
+
   return m;
 }
 
@@ -432,7 +477,7 @@ const WORLD_MAP = generateWorldMap();
 // --- Indoor Maps ---
 // 0=floor 1=wall 2=outdoor(grass) 3=water 4=counter 5=door 6=stairs 7=chest 8=exit
 const MAPS = {
-  world: { width:30, height:30, tiles: WORLD_MAP, outdoor:true, encounterRate:0.06 },
+  world: { width:50, height:50, tiles: WORLD_MAP, outdoor:true, encounterRate:0.06 },
   startTown: {
     width:16, height:16, outdoor:true, encounterRate:0,
     // はじまりの村 - 小さな村、中央に広場、北に城、南に出口
@@ -464,7 +509,7 @@ const MAPS = {
       { x:6, y:8, sprite:'npc_soldier', name:'へいし', dialogFn: true, npcId:'startGuard' },
       { x:2, y:5, sprite:'npc_woman', name:'おばあさん', dialogFn: true, npcId:'startOldLady' },
     ],
-    exits: [{ x:7, y:15, map:'world', tx:10, ty:25 }],
+    exits: [{ x:7, y:15, map:'world', tx:10, ty:45 }],
     inn: { x:11, y:5, price:5 },
   },
   lakeTown: {
@@ -498,7 +543,7 @@ const MAPS = {
       { x:12, y:9, sprite:'npc_oldman', name:'ものしりじいさん', dialogFn: true, npcId:'lakeScholar' },
       { x:7, y:12, sprite:'npc_woman', name:'こども', dialogFn: true, npcId:'lakeChild' },
     ],
-    exits: [{ x:7, y:15, map:'world', tx:20, ty:16 }],
+    exits: [{ x:7, y:15, map:'world', tx:20, ty:33 }],
     inn: { x:12, y:2, price:10 },
   },
   portTown: {
@@ -531,7 +576,7 @@ const MAPS = {
       { x:1, y:7, sprite:'npc_oldman', name:'せんちょう', dialogFn: true, npcId:'portCaptain' },
       { x:7, y:6, sprite:'npc_woman', name:'さかなうり', dialogFn: true, npcId:'portFishmonger' },
     ],
-    exits: [{ x:3, y:15, map:'world', tx:22, ty:19 }],
+    exits: [{ x:3, y:15, map:'world', tx:38, ty:19 }],
     inn: { x:2, y:5, price:15 },
   },
   cave: {
@@ -557,7 +602,7 @@ const MAPS = {
     npcs: [
       { x:14, y:1, sprite:'npc_oldman', name:'まよいびと', dialogFn: true, npcId:'caveLostMan' },
     ],
-    exits: [{ x:1, y:14, map:'world', tx:6, ty:8 }],
+    exits: [{ x:1, y:14, map:'world', tx:12, ty:23 }],
     chests: [
       { x:7, y:13, item:'magicKey', taken:false },
     ],
@@ -585,7 +630,7 @@ const MAPS = {
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     ],
     npcs: [],
-    exits: [{ x:7, y:14, map:'world', tx:17, ty:4 }],
+    exits: [{ x:7, y:14, map:'world', tx:24, ty:6 }],
     chests: [
       { x:1, y:13, item:'lightShield', taken:false },
       { x:14, y:13, item:'lightArmor', taken:false },
@@ -598,11 +643,11 @@ const MAPS = {
 
 // World map location transitions
 const WORLD_LOCATIONS = [
-  { x:10, y:24, map:'startTown', tx:7, ty:14 },
-  { x:20, y:15, map:'lakeTown', tx:7, ty:14 },
-  { x:22, y:18, map:'portTown', tx:3, ty:14 },
-  { x:6, y:7, map:'cave', tx:1, ty:14 },
-  { x:17, y:3, map:'darkCastle', tx:7, ty:14 },
+  { x:10, y:44, map:'startTown', tx:7, ty:14 },
+  { x:20, y:32, map:'lakeTown', tx:7, ty:14 },
+  { x:12, y:22, map:'cave', tx:1, ty:14 },
+  { x:38, y:18, map:'portTown', tx:3, ty:14 },
+  { x:24, y:5, map:'darkCastle', tx:7, ty:14 },
 ];
 
 // --- Monsters ---

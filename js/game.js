@@ -365,7 +365,7 @@ class Game {
 
   init() {
     this.player = {
-      x:10, y:25, hp:15, maxHp:15, mp:0, maxMp:0,
+      x:10, y:45, hp:15, maxHp:15, mp:0, maxMp:0,
       level:1, exp:0, gold:20, atk:3, def:2, spd:3,
       weapon:null, armor:null, shield:null,
       items:['herb','herb','herb'],
@@ -435,10 +435,10 @@ class Game {
     if (this.mapId === 'darkCastle') return ENCOUNTER_TABLES.castle;
     if (this.mapId === 'world') {
       const p = this.player;
-      const dist = Math.sqrt((p.x-10)**2 + (p.y-24)**2);
-      if (dist < 5) return ENCOUNTER_TABLES.near;
-      if (dist < 10) return ENCOUNTER_TABLES.midnear;
-      if (dist < 16) return ENCOUNTER_TABLES.mid;
+      const dist = Math.sqrt((p.x-10)**2 + (p.y-44)**2);
+      if (dist < 8) return ENCOUNTER_TABLES.near;
+      if (dist < 18) return ENCOUNTER_TABLES.midnear;
+      if (dist < 30) return ENCOUNTER_TABLES.mid;
       return ENCOUNTER_TABLES.far;
     }
     return null;
@@ -1925,12 +1925,12 @@ const DEBUG = {
   // --- Boss battles ---
   fightCaveBoss() {
     this.goCave();
-    _game.startBattle('gargoyle', false, 'caveBossDefeated');
+    _game.startBattle('gargoyleBoss', false, 'caveBossDefeated');
     console.log('>> ガーゴイル戦開始');
   },
   fightCastleMidBoss() {
     this.goDarkCastle();
-    _game.startBattle('darkKnight', false, 'castleMidBossDefeated');
+    _game.startBattle('darkKnightBoss', false, 'castleMidBossDefeated');
     console.log('>> あんこくきし戦開始');
   },
   fightDemonLord() {
