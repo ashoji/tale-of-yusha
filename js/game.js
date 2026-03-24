@@ -392,10 +392,11 @@ class Game {
   resize() {
     const cw = window.innerWidth, ch = window.innerHeight;
     const isMobile = 'ontouchstart' in window;
-    const avH = isMobile ? ch * 0.58 : ch;
-    const scale = Math.min(Math.floor(cw / SW), Math.floor(avH / SH)) || 1;
-    this.cv.style.width = (SW * scale) + 'px';
-    this.cv.style.height = (SH * scale) + 'px';
+    const avH = isMobile ? ch * 0.55 : ch;
+    const scale = Math.min(cw / SW, avH / SH);
+    const finalScale = isMobile ? scale : (Math.floor(scale) || 1);
+    this.cv.style.width = Math.floor(SW * finalScale) + 'px';
+    this.cv.style.height = Math.floor(SH * finalScale) + 'px';
   }
 
   // --- Map helpers ---
