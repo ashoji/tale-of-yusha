@@ -440,34 +440,34 @@ function generateWorldMap() {
   m[18][38]=4; // Port town
   // Path from bridge east to port town
   for(let x=33;x<39;x++) { if(m[18][x]!==1) m[18][x]=0; }
+  m[18][38]=4; // Re-place port town after path clearing
   for(let y=18;y<26;y++) { if(m[y][34]!==1&&m[y][34]!==7) m[y][34]=0; }
   // Clear port town surroundings
   for(let y=16;y<21;y++)for(let x=36;x<42;x++){
-    if(m[y][x]===3) m[y][x]=0;
+    if(m[y][x]===3||m[y][x]===1) m[y][x]=0;
   }
+  m[18][38]=4; // Ensure port town tile survives clearing
 
   // === North region (dark castle) ===
   // Mountains north
   for(let y=3;y<10;y++)for(let x=6;x<20;x++){
     if((x-13)*(x-13)+(y-6)*(y-6)<18) m[y][x]=2;
   }
-  for(let y=3;y<10;y++)for(let x=28;x<42;x++){
-    if((x-35)*(x-35)+(y-6)*(y-6)<18) m[y][x]=2;
+  for(let y=3;y<12;y++)for(let x=34;x<46;x++){
+    if((x-40)*(x-40)+(y-7)*(y-7)<20) m[y][x]=2;
   }
-  // Dark castle
-  m[5][24]=6;
+  // Dark castle - north of port town
+  m[4][40]=6;
   // Clear path to castle from south
-  for(let y=5;y<14;y++) { m[y][24]=m[y][24]===6?6:0; m[y][25]=0; }
-  // Path from port area / cave area north to castle corridor
-  for(let y=10;y<18;y++) { if(m[y][24]===0||m[y][24]===3) m[y][24]=0; }
-  // Connect east side path to castle path
-  for(let x=24;x<34;x++) { if(m[14][x]===0||m[14][x]===3) m[14][x]=0; }
+  for(let y=4;y<18;y++) { m[y][40]=m[y][40]===6?6:0; m[y][41]=0; }
+  // Connect port area to castle path
+  for(let x=38;x<42;x++) { if(m[14][x]===0||m[14][x]===3||m[14][x]===2) m[14][x]=0; }
 
   // === Additional paths ===
   // Main north-south corridor on west side
   for(let y=10;y<28;y++) { if(m[y][12]===0||m[y][12]===3||m[y][12]===2) m[y][12]=0; }
-  // Connect west corridor to castle path
-  for(let x=12;x<25;x++) { if(m[12][x]===0||m[12][x]===3) m[12][x]=0; }
+  // Connect west corridor to east via mid path
+  for(let x=12;x<34;x++) { if(m[12][x]===0||m[12][x]===3) m[12][x]=0; }
 
   return m;
 }
@@ -508,9 +508,10 @@ const MAPS = {
       { x:7, y:10, sprite:'npc_king', name:'おうさま', dialogFn: true, npcId:'king', event:'kingQuest' },
       { x:6, y:8, sprite:'npc_soldier', name:'へいし', dialogFn: true, npcId:'startGuard' },
       { x:2, y:5, sprite:'npc_woman', name:'おばあさん', dialogFn: true, npcId:'startOldLady' },
+      { x:7, y:5, sprite:'npc_woman', name:'やどやのおかみ', dialog:['おつかれさまですね。\nひとばん 5ゴールドです。\nゆっくり おやすみください。'] },
     ],
     exits: [{ x:7, y:15, map:'world', tx:10, ty:45 }],
-    inn: { x:11, y:5, price:5 },
+    inn: { x:7, y:6, price:5 },
   },
   lakeTown: {
     width:16, height:16, outdoor:true, encounterRate:0,
@@ -542,9 +543,10 @@ const MAPS = {
       { x:8, y:5, sprite:'npc_soldier', name:'みずもりへいし', dialogFn: true, npcId:'lakeGuard' },
       { x:12, y:9, sprite:'npc_oldman', name:'ものしりじいさん', dialogFn: true, npcId:'lakeScholar' },
       { x:7, y:12, sprite:'npc_woman', name:'こども', dialogFn: true, npcId:'lakeChild' },
+      { x:7, y:5, sprite:'npc_woman', name:'やどやのおかみ', dialog:['いらっしゃいませ！\nひとばん 10ゴールドです。\nみずうみの やどは\nいい ゆめが みられますよ。'] },
     ],
     exits: [{ x:7, y:15, map:'world', tx:20, ty:33 }],
-    inn: { x:12, y:2, price:10 },
+    inn: { x:7, y:5, price:10 },
   },
   portTown: {
     width:16, height:16, outdoor:true, encounterRate:0,
@@ -575,9 +577,10 @@ const MAPS = {
       { x:2, y:3, sprite:'npc_woman', name:'みこ', dialogFn: true, npcId:'portPriestess' },
       { x:1, y:7, sprite:'npc_oldman', name:'せんちょう', dialogFn: true, npcId:'portCaptain' },
       { x:7, y:6, sprite:'npc_woman', name:'さかなうり', dialogFn: true, npcId:'portFishmonger' },
+      { x:3, y:3, sprite:'npc_woman', name:'やどやのおかみ', dialog:['おつかれさま！\nひとばん 15ゴールドです。\nうみの しおかぜが\nきもちいいですよ。'] },
     ],
     exits: [{ x:3, y:15, map:'world', tx:38, ty:19 }],
-    inn: { x:2, y:5, price:15 },
+    inn: { x:3, y:3, price:15 },
   },
   cave: {
     width:16, height:16, outdoor:false, encounterRate:0.1, dark:true,
@@ -594,8 +597,8 @@ const MAPS = {
       [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
       [1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1],
       [1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
-      [1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
-      [1,0,0,0,0,0,0,7,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,1,1,1,1,1,1,1,0,0,0,1],
+      [1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
       [1,8,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     ],
@@ -604,9 +607,9 @@ const MAPS = {
     ],
     exits: [{ x:1, y:14, map:'world', tx:12, ty:23 }],
     chests: [
-      { x:7, y:13, item:'magicKey', taken:false },
+      { x:1, y:1, item:'magicKey', taken:false },
     ],
-    midBoss: { x:7, y:12, monsterId:'gargoyleBoss', flag:'caveBossDefeated' },
+    midBoss: { x:1, y:3, monsterId:'gargoyleBoss', flag:'caveBossDefeated' },
   },
   darkCastle: {
     width:16, height:16, outdoor:false, encounterRate:0.1,
@@ -630,11 +633,11 @@ const MAPS = {
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     ],
     npcs: [],
-    exits: [{ x:7, y:14, map:'world', tx:24, ty:6 }],
+    exits: [{ x:7, y:14, map:'world', tx:40, ty:5 }],
     chests: [
-      { x:1, y:13, item:'lightShield', taken:false },
-      { x:14, y:13, item:'lightArmor', taken:false },
-      { x:7, y:12, item:'lightSword', taken:false },
+      { x:1, y:14, item:'lightShield', taken:false },
+      { x:14, y:14, item:'lightArmor', taken:false },
+      { x:7, y:13, item:'lightSword', taken:false },
     ],
     midBoss: { x:7, y:11, monsterId:'darkKnightBoss', flag:'castleMidBossDefeated' },
     boss: { x:7, y:2, monsterId:'demonLord' },
@@ -647,7 +650,7 @@ const WORLD_LOCATIONS = [
   { x:20, y:32, map:'lakeTown', tx:7, ty:14 },
   { x:12, y:22, map:'cave', tx:1, ty:14 },
   { x:38, y:18, map:'portTown', tx:3, ty:14 },
-  { x:24, y:5, map:'darkCastle', tx:7, ty:14 },
+  { x:40, y:4, map:'darkCastle', tx:7, ty:14 },
 ];
 
 // --- Monsters ---

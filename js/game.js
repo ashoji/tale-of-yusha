@@ -1185,7 +1185,10 @@ class Game {
     if (b.monster.currentHp > 0) {
       const ms = MONSTER_SPRITES[b.monster.sprite];
       if (ms && ms.draw) {
-        ms.draw(this.ctx, SW/2-48, 20, 96, 96);
+        const isBigBoss = b.monsterId === 'demonLord' || b.monsterId === 'zomt';
+        const mw = isBigBoss ? 128 : 96;
+        const mh = isBigBoss ? 112 : 96;
+        ms.draw(this.ctx, SW/2 - mw/2, isBigBoss ? 8 : 20, mw, mh);
       }
     }
 
@@ -1313,6 +1316,14 @@ class Game {
         } else if (item && item.type === 'warp') {
           p.items.splice(this.menuSubIdx, 1);
           this.warpToTown();
+        } else if (item && item.type === 'field' && p.items[this.menuSubIdx] === 'torch') {
+          p.flags.hasTorch = true;
+          p.items.splice(this.menuSubIdx, 1);
+          sfx('confirm');
+          this.showMessage(['たいまつに ひを つけた！\nまわりが あかるくなった！'], () => {
+            this.state = 'menu'; this.menuSub = 'items';
+            this.menuSubIdx = Math.min(this.menuSubIdx, p.items.length - 1);
+          });
         }
       }
     } else if (this.menuSub === 'spells') {
