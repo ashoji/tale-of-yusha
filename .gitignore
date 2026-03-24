@@ -12,3 +12,5 @@ Thumbs.db
 # Misc
 *.log
 .playwright-mcp/
+
+.envdist/
