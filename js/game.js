@@ -1363,24 +1363,13 @@ class Game {
   warpToTown() {
     const p = this.player;
     if (!p.flags.visitedTowns) p.flags.visitedTowns = [];
-    // Always include startTown
     if (!p.flags.visitedTowns.includes('startTown')) p.flags.visitedTowns.push('startTown');
     const towns = p.flags.visitedTowns.slice();
-    if (towns.length === 1) {
-      // Only one town visited, warp directly
-      const loc = WORLD_LOCATIONS.find(l => l.map === towns[0]) || WORLD_LOCATIONS[0];
-      sfx('confirm');
-      this.state = 'field';
-      this.menuSub = null;
-      this.transitionMap('world', loc.x, loc.y);
-    } else {
-      // Show selection dialog
-      this.warpTowns = towns;
-      this.warpIdx = 0;
-      this.warpGuard = true;
-      this.state = 'warpSelect';
-      clearJP();
-    }
+    this.warpTowns = towns;
+    this.warpIdx = 0;
+    this.warpGuard = true;
+    this.state = 'warpSelect';
+    clearJP();
   }
 
   escapeFromDungeon() {
