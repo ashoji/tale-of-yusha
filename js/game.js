@@ -6,7 +6,7 @@ const T = 16, VCOLS = 16, VROWS = 12, SW = 256, SH = 240;
 const STATUS_Y = VROWS * T, STATUS_H = SH - STATUS_Y;
 const MOVE_DELAY = 14;
 const TILE_NAMES = ['grass','water','mountain','forest','town','cave','castle','bridge','desert','swamp'];
-const INDOOR_TILES = ['floor','wall','grass','water','counter','door','stairs','chest','floor'];
+const INDOOR_TILES = ['floor','wall','grass','water','counter','door','stairs','chest','floor','bed'];
 
 // === Audio ===
 let audioCtx = null;
@@ -410,7 +410,7 @@ class Game {
   isWalkable(x, y) {
     const t = this.getTile(x, y);
     if (this.mapId === 'world') return t !== 1 && t !== 2; // water & mountain block
-    return t !== 1 && t !== 3 && t !== 4; // wall, water, counter block indoors
+    return t !== 1 && t !== 3 && t !== 4 && t !== 9; // wall, water, counter, bed block indoors
   }
   getNpcAt(x, y) {
     const m = this.currentMap();
