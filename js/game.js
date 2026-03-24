@@ -1916,7 +1916,7 @@ const DEBUG = {
     _game.player.atk=s[3]; _game.player.def=s[4]; _game.player.spd=s[5];
     _game.player.spells = ['heal','fire'];
     _game.player.weapon = 'copperSword'; _game.player.armor = 'leather'; _game.player.shield = 'leatherShield';
-    _game.player.items = ['herb','herb','herb','antidote'];
+    _game.player.items = ['herb','herb','herb'];
     BGM.play('town');
     console.log('>> みずうみの町にワープ (Lv5, 初級装備)');
   },

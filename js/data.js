@@ -690,7 +690,6 @@ const ENCOUNTER_TABLES = {
 const ITEMS = {
   herb:       { name:'やくそう',       price:8,   type:'heal', value:30,  desc:'HPを30かいふくする' },
   strongHerb: { name:'じょうやくそう', price:30,  type:'heal', value:90,  desc:'HPを90かいふくする' },
-  antidote:   { name:'どくけし',       price:10,  type:'cure', value:0,   desc:'どくを なおす' },
   torch:      { name:'たいまつ',       price:15,  type:'field',value:0,   desc:'くらい ばしょを てらす' },
   magicKey:   { name:'まほうのカギ',   price:0,   type:'key',  value:0,   desc:'まほうの とびらを あける' },
   warpWing:   { name:'キメラのはね',   price:25,  type:'warp', value:0,   desc:'さいごの まちに もどる' },
@@ -762,11 +761,11 @@ const SHOPS = {
   armor:   { type:'armor',  items:['cloth','leather','leatherShield'] },
   weapon15:{ type:'weapon', items:['copperSword','ironSword'] },
   armor15: { type:'armor',  items:['leather','chain','ironShield'] },
-  item15:  { type:'item',   items:['herb','strongHerb','antidote','torch','warpWing'] },
+  item15:  { type:'item',   items:['herb','strongHerb','torch','warpWing'] },
   weapon2: { type:'weapon', items:['ironSword','steelSword'] },
   armor2:  { type:'armor',  items:['chain','ironArmor','ironShield','steelShield'] },
-  item1:   { type:'item',   items:['herb','antidote','torch','warpWing'] },
-  item2:   { type:'item',   items:['herb','strongHerb','magicDrop','antidote','torch','warpWing'] },
+  item1:   { type:'item',   items:['herb','torch','warpWing'] },
+  item2:   { type:'item',   items:['herb','strongHerb','magicDrop','torch','warpWing'] },
 };
 
 // --- NPC Dynamic Dialog System ---
