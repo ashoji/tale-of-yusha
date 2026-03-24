@@ -715,6 +715,10 @@ class Game {
       const loc = WORLD_LOCATIONS.find(l => l.x === p.x && l.y === p.y);
       if (loc) {
         p.lastTown = loc.map;
+        if (!p.flags.visitedTowns) p.flags.visitedTowns = [];
+        if (['startTown','lakeTown','portTown'].includes(loc.map) && !p.flags.visitedTowns.includes(loc.map)) {
+          p.flags.visitedTowns.push(loc.map);
+        }
         this.transitionMap(loc.map, loc.tx, loc.ty);
         return;
       }
@@ -1354,11 +1358,24 @@ class Game {
   }
 
   warpToTown() {
-    const loc = WORLD_LOCATIONS.find(l => l.map === this.player.lastTown) || WORLD_LOCATIONS[0];
-    sfx('confirm');
-    this.state = 'field';
-    this.menuSub = null;
-    this.transitionMap('world', loc.x, loc.y);
+    const p = this.player;
+    if (!p.flags.visitedTowns) p.flags.visitedTowns = [];
+    // Always include startTown
+    if (!p.flags.visitedTowns.includes('startTown')) p.flags.visitedTowns.push('startTown');
+    const towns = p.flags.visitedTowns.slice();
+    if (towns.length === 1) {
+      // Only one town visited, warp directly
+      const loc = WORLD_LOCATIONS.find(l => l.map === towns[0]) || WORLD_LOCATIONS[0];
+      sfx('confirm');
+      this.state = 'field';
+      this.menuSub = null;
+      this.transitionMap('world', loc.x, loc.y);
+    } else {
+      // Show selection dialog
+      this.warpTowns = towns;
+      this.warpIdx = 0;
+      this.state = 'warpSelect';
+    }
   }
 
   escapeFromDungeon() {
@@ -1635,6 +1652,35 @@ class Game {
     this.drawText('▶', 64, this.confirmIdx === 0 ? 92 : 112, '#FFDD33');
   }
 
+  // --- State: Warp Select ---
+  updateWarpSelect() {
+    const towns = this.warpTowns;
+    if (isDirOnce('up')) { sfx('cursor'); this.warpIdx = (this.warpIdx + towns.length - 1) % towns.length; }
+    if (isDirOnce('down')) { sfx('cursor'); this.warpIdx = (this.warpIdx + 1) % towns.length; }
+    if (isA()) {
+      const target = towns[this.warpIdx];
+      const loc = WORLD_LOCATIONS.find(l => l.map === target) || WORLD_LOCATIONS[0];
+      sfx('confirm');
+      this.state = 'field';
+      this.menuSub = null;
+      this.transitionMap('world', loc.x, loc.y);
+    }
+    if (isB()) { sfx('cancel'); this.state = 'field'; this.menuSub = null; }
+  }
+
+  renderWarpSelect() {
+    this.renderField();
+    const townNames = { startTown:'はじまりの むら', lakeTown:'みずうみの まち', portTown:'うみべの まち' };
+    const towns = this.warpTowns;
+    const h = 24 + towns.length * 20;
+    this.drawWindow(30, 50, 196, h);
+    this.drawText('どこに ワープする？', 46, 56, '#FFDD33', 11);
+    towns.forEach((t, i) => {
+      this.drawText(townNames[t] || t, 60, 76 + i * 20, i === this.warpIdx ? '#FFDD33' : '#FFF', 11);
+    });
+    this.drawText('▶', 44, 76 + this.warpIdx * 20, '#FFDD33', 11);
+  }
+
   // --- State: Ending ---
   updateEnding() {
     // Phase 0-2: text screens (ゾムト封印 → 光を取り戻す → まおうの魂)
@@ -1816,6 +1862,7 @@ class Game {
       case 'shop': this.updateShop(); break;
       case 'inn': this.updateInn(); break;
       case 'confirm': this.updateConfirm(); break;
+      case 'warpSelect': this.updateWarpSelect(); break;
       case 'ending': this.updateEnding(); break;
     }
   }
@@ -1830,6 +1877,7 @@ class Game {
       case 'shop': this.renderShop(); break;
       case 'inn': this.renderInn(); break;
       case 'confirm': this.renderConfirm(); break;
+      case 'warpSelect': this.renderWarpSelect(); break;
       case 'ending': this.renderEnding(); break;
     }
     this.renderFade();

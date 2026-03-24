@@ -580,7 +580,7 @@ const MAPS = {
       { x:3, y:1, sprite:'npc_merchant', name:'ぶきや', dialog:['うちは つよいぶきが\nそろっているよ！'], shop:'weapon2' },
       { x:10, y:1, sprite:'npc_merchant', name:'ぼうぐや', dialog:['ぼうぐは だいじだよ！'], shop:'armor2' },
       { x:5, y:8, sprite:'npc_merchant', name:'どうぐや', dialog:['いらっしゃい！\nどうぐは いかがですか？'], shop:'item2' },
-      { x:7, y:3, sprite:'npc_soldier', name:'へいし', dialogFn: true, npcId:'portSoldier' },
+      { x:8, y:3, sprite:'npc_soldier', name:'へいし', dialogFn: true, npcId:'portSoldier' },
       { x:2, y:3, sprite:'npc_woman', name:'みこ', dialogFn: true, npcId:'portPriestess' },
       { x:1, y:7, sprite:'npc_oldman', name:'せんちょう', dialogFn: true, npcId:'portCaptain' },
       { x:7, y:6, sprite:'npc_woman', name:'さかなうり', dialogFn: true, npcId:'portFishmonger' },
