@@ -560,8 +560,8 @@ class Game {
     if (isA()) {
       sfx('confirm');
       BGM.stop();
-      if (this.menuIdx === 0) { this.newGame(); BGM.play('field'); }
-      else if (this.menuIdx === 1) { this.loadGame(); BGM.play('field'); }
+      if (this.menuIdx === 0) { this.loadGame(); BGM.play('field'); }
+      else if (this.menuIdx === 1) { this.newGame(); BGM.play('field'); }
     }
     if (isDirOnce('up') || isDirOnce('down')) {
       sfx('cursor');
@@ -575,8 +575,8 @@ class Game {
     this.drawText('勇者ものがたり', 48, 40, '#FFDD33', 18);
     this.drawText('～ ひかりのつるぎを もとめて ～', 20, 70, '#AAAAFF', 10);
     this.drawWindow(60, 120, 136, 70);
-    this.drawText('はじめから', 90, 135);
-    this.drawText('つづきから', 90, 160);
+    this.drawText('つづきから', 90, 135);
+    this.drawText('はじめから', 90, 160);
     this.drawText('▶', 76, this.menuIdx === 0 ? 135 : 160, '#FFDD33');
     this.drawText('© 2026 Yuusha Monogatari', 32, 220, '#666666', 8);
   }
