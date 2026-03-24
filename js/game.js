@@ -706,17 +706,6 @@ class Game {
       this.showMessage([`たからばこをあけた！\n${itemName}を てにいれた！`]);
       return;
     }
-
-    // Check for inn
-    if (m.inn) {
-      const innDist = Math.abs(p.x - m.inn.x) + Math.abs(p.y - m.inn.y);
-      if (innDist <= 1) {
-        sfx('confirm');
-        this.state = 'inn';
-        this.menuIdx = 0;
-        return;
-      }
-    }
   }
 
   onStep() {
