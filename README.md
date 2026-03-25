@@ -3,6 +3,16 @@
 FC（ファミコン）風のターン制RPGです。  
 ブラウザだけで動作し、PC・スマホの両方でプレイできます。
 
+## スクリーンショット
+
+| タイトル画面 | フィールド |
+|:---:|:---:|
+| ![タイトル画面](screenshots/title.png) | ![フィールド](screenshots/field.png) |
+
+| 町 | 戦闘シーン |
+|:---:|:---:|
+| ![町](screenshots/town.png) | ![戦闘シーン](screenshots/battle.png) |
+
 ---
 
 ## 遊び方
