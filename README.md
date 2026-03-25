@@ -310,8 +310,6 @@ DEBUG.help()    // 全コマンド一覧を表示
 | `DEBUG.fullHeal()` | HP/MP全回復 |
 | `DEBUG.bestEquip()` | ひかり装備一式を装備 |
 | `DEBUG.addItems()` | アイテムを補充 |
-| `DEBUG.bestEquip()` | ひかり装備一式を装備 |
-| `DEBUG.addItems()` | アイテムを補充 |
 
 ---
 
