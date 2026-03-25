@@ -619,7 +619,7 @@ const MAPS = {
     midBoss: { x:1, y:3, monsterId:'gargoyleBoss', flag:'caveBossDefeated' },
   },
   darkCastle: {
-    width:16, height:16, outdoor:false, encounterRate:0.1,
+    width:16, height:17, outdoor:false, encounterRate:0.1,
     tiles: [
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
