@@ -356,7 +356,6 @@ class Game {
     this.frame = 0;
     this.textTimer = 0; this.textChar = 0;
     this.fade = 0; this.fadeDir = 0; this.fadeCb = null;
-    this.ending = false;
     this.endingPhase = 0;
     this.endingTimer = 0;
     this.chestStates = {};
@@ -714,10 +713,10 @@ class Game {
     if (this.mapId === 'world') {
       const loc = WORLD_LOCATIONS.find(l => l.x === p.x && l.y === p.y);
       if (loc) {
-        p.lastTown = loc.map;
-        if (!p.flags.visitedTowns) p.flags.visitedTowns = [];
-        if (['startTown','lakeTown','portTown'].includes(loc.map) && !p.flags.visitedTowns.includes(loc.map)) {
-          p.flags.visitedTowns.push(loc.map);
+        if (['startTown','lakeTown','portTown'].includes(loc.map)) {
+          p.lastTown = loc.map;
+          if (!p.flags.visitedTowns) p.flags.visitedTowns = [];
+          if (!p.flags.visitedTowns.includes(loc.map)) p.flags.visitedTowns.push(loc.map);
         }
         this.transitionMap(loc.map, loc.tx, loc.ty);
         return;
@@ -896,7 +895,6 @@ class Game {
                 this.player.flags.zomtDefeated = true;
                 BGM.stop();
                 this.state = 'ending';
-                this.ending = true;
                 this.endingPhase = 0;
                 this.endingTimer = 0;
                 return;
@@ -1178,7 +1176,6 @@ class Game {
       if (!next || p.exp < next[0]) break;
       p.level++;
       const s = LEVEL_TABLE[p.level - 1];
-      const oldHp = p.maxHp, oldMp = p.maxMp;
       p.maxHp = s[1]; p.maxMp = s[2]; p.atk = s[3]; p.def = s[4]; p.spd = s[5];
       p.hp = p.maxHp; p.mp = p.maxMp;
       sfx('levelup');
@@ -1372,10 +1369,6 @@ class Game {
     } else if (this.menuSub === 'equip') {
       // Simple equip display, no changes from menu for now
     }
-  }
-
-  useFieldSpell(id) {
-    // Handled through spell menu
   }
 
   warpToTown() {
