@@ -1242,7 +1242,11 @@ class Game {
       spells.slice(spStart, spStart + 4).forEach((sid, i) => {
         const sp = SPELLS[sid];
         const idx = spStart + i;
-        this.drawText(`${sp.name} MP${sp.mp}`, 24, 188 + i * 13, idx === b.spellIdx ? '#FFDD33' : '#FFF', 10);
+        if (sp) {
+          this.drawText(`${sp.name} MP${sp.mp}`, 24, 188 + i * 13, idx === b.spellIdx ? '#FFDD33' : '#FFF', 10);
+        } else {
+          this.drawText(`??? MP??`, 24, 188 + i * 13, idx === b.spellIdx ? '#FFDD33' : '#FFF', 10);
+        }
       });
       if (spells.length > 0) this.drawText('▶', 10, 188 + (b.spellIdx - spStart) * 13, '#FFDD33', 10);
     }
@@ -1464,7 +1468,11 @@ class Game {
     if (p.spells.length === 0) { this.drawText('おぼえていない', 120, 34, '#999', 10); return; }
     p.spells.forEach((sid, i) => {
       const sp = SPELLS[sid];
-      this.drawText(`${sp.name} ${sp.mp}MP`, 136, 30 + i * 14, i === this.menuSubIdx ? '#FFDD33' : '#FFF', 10);
+      if (sp) {
+        this.drawText(`${sp.name} ${sp.mp}MP`, 136, 30 + i * 14, i === this.menuSubIdx ? '#FFDD33' : '#FFF', 10);
+      } else {
+        this.drawText(`??? ??MP`, 136, 30 + i * 14, i === this.menuSubIdx ? '#FFDD33' : '#FFF', 10);
+      }
     });
     this.drawText('▶', 122, 30 + this.menuSubIdx * 14, '#FFDD33', 10);
   }
