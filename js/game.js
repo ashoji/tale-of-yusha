@@ -779,13 +779,21 @@ class Game {
   startBattle(monsterId, isBoss, midBossFlag) {
     const md = MONSTERS[monsterId];
     BGM.play(isBoss || md.boss ? 'boss' : 'battle');
+    const msgQueue = [];
+    if (monsterId === 'demonLord') {
+      msgQueue.push(
+        'まおう「フハハハ…\nよくぞ ここまで きたな。」',
+        'まおう「おまえの ちちも\nゆうしゃ だったが\nわしが ほうむってやった。」',
+        'まおう「おまえも おなじ\nめに あわせてやろう！」',
+      );
+    }
     this.battle = {
       monster: { ...md, currentHp: md.hp },
       monsterId,
       phase: 'encounter',
       cmdIdx: 0,
       msg: `${md.name}が あらわれた！`,
-      msgQueue: [],
+      msgQueue,
       timer: 60,
       spellIdx: 0,
       itemIdx: 0,
@@ -800,7 +808,14 @@ class Game {
     switch (b.phase) {
       case 'encounter':
         if (b.timer > 0) { b.timer--; return; }
-        if (isA()) { b.phase = 'command'; b.cmdIdx = 0; }
+        if (isA()) {
+          if (b.msgQueue.length > 0) {
+            b.msg = b.msgQueue.shift();
+            b.timer = 20;
+          } else {
+            b.phase = 'command'; b.cmdIdx = 0;
+          }
+        }
         break;
       case 'command':
         if (isDirOnce('up')) { sfx('cursor'); b.cmdIdx = (b.cmdIdx + 3) % 4; }
@@ -864,8 +879,11 @@ class Game {
                 if (!this.player.spells.includes('roucon')) {
                   this.player.spells.push('roucon');
                 }
-                this.battle.msg = 'まおうの からだから\nおそろしい ちからが あふれだす…！';
+                this.battle.msg = 'まおう「おのれ ゆうしゃめ…\nひかりのつるぎさえ\nなければ やられは\nしなかったものを…」';
                 this.battle.msgQueue = [
+                  'まおう「だが もう おそい…\nわしの やみの ちからは\nきえぬ…！」',
+                  'まおう「いでよ… ゾムトよ…！\nこの せかいを\nやみに しずめよ…！」',
+                  'まおうの からだから\nおそろしい ちからが あふれだす…！',
                   'ゆうしゃの こころに\nふういんの じゅもんが\nひびきわたる…！',
                   'ロウチョンの じゅもんを\nおぼえた！',
                   'しんの すがたが あらわれた！',
