@@ -7,6 +7,7 @@ const STATUS_Y = VROWS * T, STATUS_H = SH - STATUS_Y;
 const MOVE_DELAY = 14;
 const TILE_NAMES = ['grass','water','mountain','forest','town','cave','castle','bridge','desert','swamp'];
 const INDOOR_TILES = ['floor','wall','grass','water','counter','door','stairs','chest','floor','bed'];
+const TOWN_MAPS = ['startTown', 'lakeTown', 'portTown'];
 
 // === Audio ===
 let audioCtx = null;
@@ -400,6 +401,10 @@ class Game {
 
   // --- Map helpers ---
   currentMap() { return MAPS[this.mapId]; }
+  getBgmForMap(mapId = this.mapId) {
+    if (!mapId) return null;
+    return TOWN_MAPS.includes(mapId) ? 'town' : 'field';
+  }
   getTile(x, y) {
     const m = this.currentMap();
     if (x < 0 || y < 0 || x >= m.width || y >= m.height) return 1; // wall/water
@@ -753,14 +758,12 @@ class Game {
       this.mapId = mapId;
       this.player.x = tx;
       this.player.y = ty;
-      // Switch BGM based on map
-      if (mapId === 'startTown' || mapId === 'lakeTown' || mapId === 'portTown') {
-        if (BGM.playing !== 'town') BGM.play('town');
-        // Record visited town
+      const songId = this.getBgmForMap(mapId);
+      const isTown = songId === 'town';
+      if (songId && BGM.playing !== songId) BGM.play(songId);
+      if (isTown) {
         if (!this.player.flags.visitedTowns) this.player.flags.visitedTowns = [];
         if (!this.player.flags.visitedTowns.includes(mapId)) this.player.flags.visitedTowns.push(mapId);
-      } else {
-        if (BGM.playing !== 'field') BGM.play('field');
       }
       this.fadeDir = -1;
       this.fadeCb = () => { this.fadeDir = 0; };
@@ -1287,9 +1290,8 @@ class Game {
             localStorage.setItem('yuusha_sound', soundEnabled ? 'on' : 'off');
             if (!soundEnabled) { BGM.stop(); }
             else if (this.state === 'menu') {
-              const bgmMap = { world:'field', town1:'town', town2:'town', town3:'town', castle_interior:'town' };
-              const songId = bgmMap[this.mapId] || 'field';
-              BGM.play(songId);
+              const songId = this.getBgmForMap();
+              if (songId) BGM.play(songId);
             }
             break;
           case 6: sfx('cancel'); this.state = 'field'; break;
